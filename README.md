@@ -31,13 +31,16 @@ the apple repos.
 
      $swiftbuild.sh setup                             # Downloads all the source and sets up a build enviroment
      $swiftbuild.sh update                            # Updates the swift source repo clones with lastest version
-     $swiftbuild.sh build                             # build and install the compiler
+     $swiftbuild.sh build                             # build the compiler
      $swiftbuild.sh test                              # build and run the test suite
 
 Note: There is a configuration option in the script "BUILDTHREADS", which sets the number of threads the build system uses.
 By Default it is set to 1, I have a tried it on two machines, a 4core machine with 8G Ram and and an 8core machine with 12G Ram, and in both cases
 the machines became completly unresponsive and swap bound if i took it above 2, at the end of the build pass the swift compilation system links a bunch
 of executables and each link takes 2-4G of Ram.  
+
+## Installing
+Still working on the install phase, i will need to run up an ubuntu vm to see where it installs etc, and what the standard binaries are called, there are already a couple of unix tools called swift, one is a messaging client and the other is part of the openstack project.
 
 ## Hacky stuff
 The swift build system was designed for Ubuntu, and refferences a directory /usr/include/x86_64-gnu-linux/ which is an alias of /usr/include, the setup phase of the swiftbuild script
