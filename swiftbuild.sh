@@ -81,16 +81,15 @@ popd
     ;;
 "build" )  echo  "building swift"
     pushd $BUILDROOT/swift
-      utils/build-script -- --build-args="-j $BUILDTHREADS"
+      utils/build-script -R -m -- --build-args="-j $BUILDTHREADS"
     popd
    ;;
 "test" )  echo  "running tests"
     pushd $BUILDROOT/swift
-      utils/build-script -t -- --build-args="-j $BUILDTHREADS"
+      utils/build-script -R -m -t -- --build-args="-j $BUILDTHREADS"
     popd
     ;;
 
 *) echo "Unrecognised command: $1"
    ;;
 esac
-
