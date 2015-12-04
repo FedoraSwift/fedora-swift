@@ -29,10 +29,10 @@ The build system creates a folder called ~/tmp/swiftbuild in your home directory
 password if it needs it.  The setup phase installs any missing packages required using "dnf". The setup phase will download all the source from
 the apple repos.
 
-   $swiftbuild.sh setup                             # Downloads all the source and sets up a build enviroment
-   $swiftbuild.sh update                            # Updates the swift source repo clones with lastest version
-   $swiftbuild.sh build                             # build and install the compiler
-   $swiftbuild.sh test                              # build and run the test suite
+     $swiftbuild.sh setup                             # Downloads all the source and sets up a build enviroment
+     $swiftbuild.sh update                            # Updates the swift source repo clones with lastest version
+     $swiftbuild.sh build                             # build and install the compiler
+     $swiftbuild.sh test                              # build and run the test suite
 
 Note: There is a configuration option in the script "BUILDTHREADS", which sets the number of threads the build system uses.
 By Default it is set to 1, I have a tried it on two machines, a 4core machine with 8G Ram and and an 8core machine with 12G Ram, and in both cases
