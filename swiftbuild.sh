@@ -70,21 +70,18 @@ case "$1" in
 
     for repo in "${SWIFTREPOS[@]}"; do
       repodir=$BUILDROOT/`echo $repo | cut -d " " -f 2`
-      if [ ! -d "$repodir" ] ; then
+      if [  -d "$repodir" ] ; then
         pushd $repodir
         git pull
         popd
       fi
     done
 
-    if [ ! -d ~/tmp/swiftbuild/ninja ] ; then
+    if [ -d ~/tmp/swiftbuild/ninja ] ; then
       pushd ~/tmp/swiftbuild/ninja
       git pull
       popd
     fi
-
-    popd
-
   ;;
   "build" )  echo  "building swift"
     pushd $BUILDROOT/swift
