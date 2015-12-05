@@ -6,14 +6,21 @@ BUILDTHREADS=1
 
 if [ $# -lt 1 ]
 then
-        echo "Usage : $0 [setup|update|build|test]"
-        exit
+  echo "Usage : $0 [reset|setup|update|build|test]"
+  exit
 fi
 
 case "$1" in
 
-"setup" )  echo "Setup build enviroment"
-sudo dnf install -y \
+  "reset" )  echo "reset build enviroment"
+    rm -rf $BUILDROOT
+    mkdir -p $BUILDROOT
+    echo "reset done"
+  ;;
+
+
+  "setup" )  echo "Setup build enviroment"
+    sudo dnf install -y \
     git \
     cmake \
     ninja-build \
@@ -35,61 +42,69 @@ sudo dnf install -y \
 
     #fix the missing libc6 references
     pushd /usr/include
-      sudo ln -s . x86_64-linux-gnu
+    sudo ln -s . x86_64-linux-gnu
     popd
 
     # Make sure the build root directory is present.
 
-    mkdir -p ~/tmp/swiftbuild
+    mkdir -p $BUILDROOT
     pushd $BUILDROOT
     for repo in "${SWIFTREPOS[@]}"; do
-    repodir=$BUILDROOT/`echo $repo | cut -d " " -f 2`
-    	if [ ! -d "$repodir" ] ; then
-    		git clone $SWIFTREPOSBASE/$repo
-    	fi
+      repodir=$BUILDROOT/`echo $repo | cut -d " " -f 2`
+      if [ ! -d "$repodir" ] ; then
+        git clone $SWIFTREPOSBASE/$repo
+      fi
     done
 
 
 
     if [ ! -d ~/tmp/swiftbuild/ninja ] ; then
-    	git clone git@github.com:martine/ninja.git
+      git clone git@github.com:martine/ninja.git
     fi
 
     popd
 
-    ;;
+  ;;
 
-"update" )  echo  "updating repositories"
+  "update" )  echo  "updating repositories"
 
-for repo in "${SWIFTREPOS[@]}"; do
-repodir=$BUILDROOT/`echo $repo | cut -d " " -f 2`
-  if [ ! -d "$repodir" ] ; then
-    pushd $repodir
+    for repo in "${SWIFTREPOS[@]}"; do
+      repodir=$BUILDROOT/`echo $repo | cut -d " " -f 2`
+      if [ ! -d "$repodir" ] ; then
+        pushd $repodir
+        git pull
+        popd
+      fi
+    done
+
+    if [ ! -d ~/tmp/swiftbuild/ninja ] ; then
+      pushd ~/tmp/swiftbuild/ninja
       git pull
+      popd
+    fi
+
     popd
-  fi
-done
 
-if [ ! -d ~/tmp/swiftbuild/ninja ] ; then
-  pushd ~/tmp/swiftbuild/ninja
-    git pull
-  popd
-fi
-
-popd
-
-    ;;
-"build" )  echo  "building swift"
+  ;;
+  "build" )  echo  "building swift"
     pushd $BUILDROOT/swift
-      utils/build-script -R -m -- --build-args="-j $BUILDTHREADS"
+    utils/build-script -R -m -- --build-args="-j $BUILDTHREADS"
     popd
-   ;;
-"test" )  echo  "running tests"
-    pushd $BUILDROOT/swift
-      utils/build-script -R -m -t -- --build-args="-j $BUILDTHREADS"
-    popd
-    ;;
+  ;;
 
-*) echo "Unrecognised command: $1"
-   ;;
+  "clean" )  echo  "clean build"
+    echo "not yet implemented"
+  ;;
+  "test" )  echo  "running tests"
+    pushd $BUILDROOT/swift
+    utils/build-script -R -m -t -- --build-args="-j $BUILDTHREADS"
+    popd
+  ;;
+
+  "install" )  echo  "install build"
+    echo "not yet implemented"
+  ;;
+
+  *) echo "Unrecognised command: $1"
+  ;;
 esac
