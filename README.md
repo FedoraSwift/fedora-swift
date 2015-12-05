@@ -8,8 +8,7 @@ that is something I'm working on right now. I am publishing this code now in the
 Its also worth remembering that in the days and weeks following the release, its not unlikely that full support for Fedora is not going to be implemented in the base build scripts.
 
 ## Tests
-The current version has one unit test failure, but this may be an existing issue in the source, i would be keen to hear from any
-Ubuntu users to see if they have the same experience when building from source.
+The current version does not show any unit-test failures as shown below.
 
 ```
 [100%] Running Swift tests for x86_64-unknown-linux-gnu
