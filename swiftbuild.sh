@@ -1,12 +1,29 @@
 #!/bin/sh
 BUILDROOT=~/tmp/swiftbuild
-declare -a SWIFTREPOS=("swift.git swift" "swift-llvm.git llvm" "swift-clang.git clang" "swift-lldb.git lldb" "swift-cmark.git cmark" "swift-llbuild.git llbuild" "swift-package-manager.git swiftpm" "swift-corelibs-xctest.git swift-corelibs-xctest"  "swift-corelibs-foundation.git swift-corelibs-foundation")
-SWIFTREPOSBASE="git@github.com:apple"
-BUILDTHREADS=1
+declare -a SWIFTREPOS=(\
+        "git@github.com:apple/swift.git swift" \
+        "git@github.com:apple/swift-llvm.git llvm" \
+        "git@github.com:apple/swift-clang.git clang" \
+        "git@github.com:apple/swift-lldb.git lldb" \
+        "git@github.com:apple/swift-cmark.git cmark" \
+        "git@github.com:apple/swift-llbuild.git llbuild" \
+        "git@github.com:apple/swift-package-manager.git swiftpm" \
+        "git@github.com:apple/swift-corelibs-xctest.git swift-corelibs-xctest"  \
+        "git@github.com:apple/swift-corelibs-foundation.git swift-corelibs-foundation"\
+        )
+BUILDTHREADS=3
+
+THISDIR="`dirname \"$0\"`"              # relative
+THISDIR="`( pushd \"$THISDIR\" >/dev/null && pwd )`"  # absolutized and normalized
+if [ -z "$THISDIR" ] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  exit 1  # fail
+fi
 
 if [ $# -lt 1 ]
 then
-  echo "Usage : $0 [reset|setup|update|build|test]"
+  echo "Usage : $0 [reset|clean|setup|update|package]"
   exit
 fi
 
@@ -15,12 +32,16 @@ case "$1" in
   "reset" )  echo "reset build enviroment"
     rm -rf $BUILDROOT
     mkdir -p $BUILDROOT
+    mkdir -p $BUILDROOT/package
+    mkdir -p $BUILDROOT/symroot
+    mkdir -p $BUILDROOT/build
+    
     echo "reset done"
   ;;
 
 
   "setup" )  echo "Setup build enviroment"
-    sudo dnf install -y \
+    sudo dnf install -y --best --allowerasing \
     git \
     cmake \
     ninja-build \
@@ -42,24 +63,33 @@ case "$1" in
 
     #fix the missing libc6 references
     pushd /usr/include
-    sudo ln -s . x86_64-linux-gnu
+    	sudo ln -s . x86_64-linux-gnu
     popd
 
     # Make sure the build root directory is present.
 
     mkdir -p $BUILDROOT
+    mkdir -p $BUILDROOT/package
+    mkdir -p $BUILDROOT/symroot
+    mkdir -p $BUILDROOT/build
+
     pushd $BUILDROOT
     for repo in "${SWIFTREPOS[@]}"; do
       repodir=$BUILDROOT/`echo $repo | cut -d " " -f 2`
       if [ ! -d "$repodir" ] ; then
-        git clone $SWIFTREPOSBASE/$repo
+        git clone $repo
       fi
     done
 
 
-
     if [ ! -d ~/tmp/swiftbuild/ninja ] ; then
       git clone git@github.com:martine/ninja.git
+    fi
+
+    if [ ! -f /usr/bin/ninja ] ; then
+         if [ -f /usr/bin/ninja-build ] ; then
+            sudo ln -s /usr/bin/ninja-build /usr/bin/ninja
+         fi
     fi
 
     popd
@@ -67,6 +97,12 @@ case "$1" in
   ;;
 
   "update" )  echo  "updating repositories"
+
+  mkdir -p $BUILDROOT
+  mkdir -p $BUILDROOT/package
+  mkdir -p $BUILDROOT/symroot
+  mkdir -p $BUILDROOT/build
+
 
     for repo in "${SWIFTREPOS[@]}"; do
       repodir=$BUILDROOT/`echo $repo | cut -d " " -f 2`
@@ -83,23 +119,34 @@ case "$1" in
       popd
     fi
   ;;
-  "build" )  echo  "building swift"
-    pushd $BUILDROOT/swift
-    utils/build-script -R -m -- --build-args="-j $BUILDTHREADS"
-    popd
-  ;;
 
   "clean" )  echo  "clean build"
-    echo "not yet implemented"
-  ;;
-  "test" )  echo  "running tests"
-    pushd $BUILDROOT/swift
-    utils/build-script -R -m -t -- --build-args="-j $BUILDTHREADS"
-    popd
+  mkdir -p $BUILDROOT
+  mkdir -p $BUILDROOT/package
+  mkdir -p $BUILDROOT/symroot
+  mkdir -p $BUILDROOT/build
+  rm -rf $BUILDROOT/build/*
+  rm -rf $BUILDROOT/package/*
+  rm -rf $BUILDROOT/symroot/*
   ;;
 
-  "install" )  echo  "install build"
-    echo "not yet implemented"
+  "build" )  echo  "build"
+  mkdir -p $BUILDROOT
+  mkdir -p $BUILDROOT/package
+  mkdir -p $BUILDROOT/symroot
+
+  if [ -f  "$BUILDROOT/package/swift-linux-x86_64-fedora.tgz" ] ; then
+    rm "$BUILDROOT/package/swift-linux-x86_64-fedora.tgz"
+  fi
+
+  pushd $BUILDROOT/swift
+    utils/build-script --preset-file=$THISDIR/linuxpreset.ini \
+      --preset=buildbot_linux_build_fedora23 \
+      install_destdir="$BUILDROOT/package" \
+      install_symroot="$BUILDROOT/symroot" \
+      installable_package="$BUILDROOT/package/swift-linux-x86_64-fedora.tgz" \
+      build_threads=$BUILDTHREADS
+  popd
   ;;
 
   *) echo "Unrecognised command: $1"
