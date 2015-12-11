@@ -12,6 +12,7 @@ declare -a SWIFTREPOS=(\
         "git@github.com:apple/swift-corelibs-foundation.git swift-corelibs-foundation"\
         )
 BUILDTHREADS=3
+NOW=`date +%Y-%m-%d--%H:%M:%S`
 
 THISDIR="`dirname \"$0\"`"              # relative
 THISDIR="`( pushd \"$THISDIR\" >/dev/null && pwd )`"  # absolutized and normalized
@@ -23,7 +24,7 @@ fi
 
 if [ $# -lt 1 ]
 then
-  echo "Usage : $0 [reset|clean|setup|update|package]"
+  echo "Usage : $0 [reset|clean|patch|setup|update|package]"
   exit
 fi
 
@@ -62,9 +63,9 @@ case "$1" in
 
 
     #fix the missing libc6 references
-    pushd /usr/include
-    	sudo ln -s . x86_64-linux-gnu
-    popd
+    #pushd /usr/include
+    #	sudo ln -s . x86_64-linux-gnu
+    #popd
 
     # Make sure the build root directory is present.
 
@@ -135,8 +136,8 @@ case "$1" in
   mkdir -p $BUILDROOT/package
   mkdir -p $BUILDROOT/symroot
 
-  if [ -f  "$BUILDROOT/package/swift-linux-x86_64-fedora.tgz" ] ; then
-    rm "$BUILDROOT/package/swift-linux-x86_64-fedora.tgz"
+  if [ -f  "$BUILDROOT/package/swift-linux-x86_64-fedora-$NOW.tgz" ] ; then
+    rm "$BUILDROOT/package/swift-linux-x86_64-fedora-$NOW.tgz"
   fi
 
   pushd $BUILDROOT/swift
@@ -144,9 +145,27 @@ case "$1" in
       --preset=buildbot_linux_build_fedora23 \
       install_destdir="$BUILDROOT/package" \
       install_symroot="$BUILDROOT/symroot" \
-      installable_package="$BUILDROOT/package/swift-linux-x86_64-fedora.tgz" \
+      installable_package="$BUILDROOT/package/swift-linux-x86_64-fedora-$NOW.tgz" \
       build_threads=$BUILDTHREADS
   popd
+  ;;
+
+"patch" )  echo  "patch"
+  mkdir -p $BUILDROOT
+  mkdir -p $BUILDROOT/package
+  mkdir -p $BUILDROOT/symroot
+
+  if [ -f  "$BUILDROOT/package/swift-linux-x86_64-fedora-$NOW.tgz" ] ; then
+    rm "$BUILDROOT/package/swift-linux-x86_64-fedora-$NOW.tgz"
+  fi
+
+  if [ ! -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7 ] ; then 
+    if [ -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7 ] ; then
+      mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7
+      cp -R $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7/* $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7
+    fi
+  fi
+  echo "patched ";
   ;;
 
   *) echo "Unrecognised command: $1"
