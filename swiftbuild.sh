@@ -47,6 +47,7 @@ case "$1" in
     cmake \
     ninja-build \
     clang \
+    re2c \
     uuid-devel \
     libuuid-devel \
     icu \
