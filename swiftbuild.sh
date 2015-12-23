@@ -24,7 +24,7 @@ fi
 
 if [ $# -lt 1 ]
 then
-  echo "Usage : $0 [reset|clean|patch|setup|update|package]"
+  echo "Usage : $0 [reset|clean|patch|setup|update|build]"
   exit
 fi
 
