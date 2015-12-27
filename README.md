@@ -48,14 +48,14 @@ The tar file that is generated is the same layout as the ubuntu one, so just fol
 
 ## Hacky stuff
 
-There is a bug in the lldb debugger build that creates the python2.7 bindings in the wrong place,  previous versions of this script required running a "patch" function, but now we avoid that bu introducing a symlink into the build stage befor the buid is run. 
+There is a bug in the lldb debugger build that creates the python2.7 bindings in the wrong place,  previous versions of this script required running a "patch" function, but now we avoid that by introducing a symlink into the build stage before the build is run. 
 
 You can follow the bug here https://bugs.swift.org/browse/SR-100
 
 ## Caveats
-The switch master branch is curently under rapid change, so this script will often at times fail for reasons other than the bug above, you can update to the latest version and try and build again, note: that once you have executed the "patch" command once, you should not need it again unless you blow away the ~/tmp/swiftbuild/build directory. 
+The switch master branch is curently under rapid change, so this script will often at times fail for reasons other than the bug above, you can update to the latest version and try and build again. 
 
-To update an rebuild 
+To update and rebuild 
 
 ```
      $swiftbuild.sh update                            # pull down the latest updates to the repository
