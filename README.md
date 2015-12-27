@@ -48,16 +48,9 @@ The tar file that is generated is the same layout as the ubuntu one, so just fol
 
 ## Hacky stuff
 
-There is a bug in the lldb debugger build that creates the python2.7 bindings in the wrong place, so the first time you run ./swiftbuild.sh build it will fail, you have to run the following sequence until the bug is fixed
+There is a bug in the lldb debugger build that creates the python2.7 bindings in the wrong place,  previous versions of this script required running a "patch" function, but now we avoid that bu introducing a symlink into the build stage befor the buid is run. 
 
 You can follow the bug here https://bugs.swift.org/browse/SR-100
-
-```
-     $swiftbuild.sh setup                             # Downloads all the source and sets up a build environment
-     $swiftbuild.sh build                             # build the compiler, IT WILL fail with an error about the python2.7 directory being missing. 
-     $swiftbuild.sh patch				# copy the python binding insterface from /lib64 to /lib 
-     $swiftbuild.sh build                             # should succeed and build the install package int ~/tmp/swiftbuild/package directory 
-```
 
 ## Caveats
 The switch master branch is curently under rapid change, so this script will often at times fail for reasons other than the bug above, you can update to the latest version and try and build again, note: that once you have executed the "patch" command once, you should not need it again unless you blow away the ~/tmp/swiftbuild/build directory. 
@@ -70,6 +63,5 @@ To update an rebuild
 ```
 
 Once we get to a stable branch that builds on F23, I will switch the script to checking out that version instead of the wildly unstable 'master' branch. 
-
 
 

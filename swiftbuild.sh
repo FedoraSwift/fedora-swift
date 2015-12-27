@@ -1,17 +1,17 @@
 #!/bin/sh
 BUILDROOT=~/tmp/swiftbuild
 declare -a SWIFTREPOS=(\
-        "git@github.com:apple/swift.git swift" \
-        "git@github.com:apple/swift-llvm.git llvm" \
-        "git@github.com:apple/swift-clang.git clang" \
-        "git@github.com:apple/swift-lldb.git lldb" \
-        "git@github.com:apple/swift-cmark.git cmark" \
-        "git@github.com:apple/swift-llbuild.git llbuild" \
-        "git@github.com:apple/swift-package-manager.git swiftpm" \
-        "git@github.com:apple/swift-corelibs-xctest.git swift-corelibs-xctest"  \
-        "git@github.com:apple/swift-corelibs-foundation.git swift-corelibs-foundation"\
+        "https://github.com/apple/swift.git swift" \
+        "https://github.com/apple/swift-llvm.git llvm" \
+        "https://github.com/apple/swift-clang.git clang" \
+        "https://github.com/apple/swift-lldb.git lldb" \
+        "https://github.com/apple/swift-cmark.git cmark" \
+        "https://github.com/apple/swift-llbuild.git llbuild" \
+        "https://github.com/apple/swift-package-manager.git swiftpm" \
+        "https://github.com/apple/swift-corelibs-xctest.git swift-corelibs-xctest"  \
+        "https://github.com/apple/swift-corelibs-foundation.git swift-corelibs-foundation"\
         )
-BUILDTHREADS=3
+BUILDTHREADS=2
 NOW=`date +%Y-%m-%d--%H:%M:%S`
 
 THISDIR="`dirname \"$0\"`"              # relative
@@ -24,7 +24,7 @@ fi
 
 if [ $# -lt 1 ]
 then
-  echo "Usage : $0 [reset|clean|patch|setup|update|package]"
+  echo "Usage : $0 [reset|clean|setup|update|build]"
   exit
 fi
 
@@ -60,6 +60,7 @@ case "$1" in
     swig \
     python-libs \
     ncurses-devel \
+    python-devel \
     python-pkgconfig
 
 
@@ -85,7 +86,7 @@ case "$1" in
 
 
     if [ ! -d ~/tmp/swiftbuild/ninja ] ; then
-      git clone git@github.com:martine/ninja.git
+      git clone https://github.com/martine/ninja.git
     fi
 
     if [ ! -f /usr/bin/ninja ] ; then
@@ -120,6 +121,17 @@ case "$1" in
       git pull
       popd
     fi
+
+  mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib
+  mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7
+
+  if [ ! -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7 ] ; then
+    if [ -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7 ] ; then
+      ln -s $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7 $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7
+    fi
+  fi
+
+
   ;;
 
   "clean" )  echo  "clean build"
@@ -141,6 +153,15 @@ case "$1" in
     rm "$BUILDROOT/package/swift-linux-x86_64-fedora-$NOW.tgz"
   fi
 
+  mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib
+  mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7
+
+  if [ ! -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7 ] ; then
+    if [ -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7 ] ; then
+      ln -s $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7 $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7
+    fi
+  fi
+
   pushd $BUILDROOT/swift
     utils/build-script --preset-file=$THISDIR/linuxpreset.ini \
       --preset=buildbot_linux_build_fedora23 \
@@ -160,10 +181,12 @@ case "$1" in
     rm "$BUILDROOT/package/swift-linux-x86_64-fedora-$NOW.tgz"
   fi
 
+  mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib
+  mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7
+
   if [ ! -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7 ] ; then 
     if [ -d $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7 ] ; then
-      mkdir -p $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7
-      cp -R $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7/* $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7
+      ln -s $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib64/python2.7 $BUILDROOT/build/buildbot_linux/lldb-linux-x86_64/lib/python2.7
     fi
   fi
   echo "patched ";
