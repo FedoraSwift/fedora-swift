@@ -53,7 +53,7 @@ There is a bug in the lldb debugger build that creates the python2.7 bindings in
 You can follow the bug here https://bugs.swift.org/browse/SR-100
 
 ## Caveats
-The switch master branch is curently under rapid change, so this script will often at times fail for reasons other than the bug above, you can update to the latest version and try and build again. 
+The Swift master branch is curently under rapid change, so this script will often at times fail for reasons other than the bug above, you can update to the latest version and try and build again. 
 
 To update and rebuild 
 
