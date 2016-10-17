@@ -9,8 +9,8 @@ declare -a SWIFTREPOS=(\
         "https://github.com/apple/swift-llbuild.git llbuild" \
         "https://github.com/apple/swift-package-manager.git swiftpm" \
         "https://github.com/apple/swift-corelibs-xctest.git swift-corelibs-xctest"  \
-        "https://github.com/apple/swift-corelibs-foundation.git swift-corelibs-foundation" \
-        "https://github.com/apple/swift-corelibs-libdispatch.git swift-corelibs-libdispatch" \
+        "https://github.com/apple/swift-corelibs-foundation.git swift-corelibs-foundation"\
+	"https://github.com/apple/swift-corelibs-libdispatch.git swift-corelibs-libdispatch"\
         )
 BUILDTHREADS=2
 NOW=`date +%Y-%m-%d--%H:%M:%S`
@@ -43,13 +43,68 @@ case "$1" in
 
 
   "setup" )  echo "Setup build enviroment"
+
+    #install epel-release, wget
+    sudo yum -y install epel-release wget
+
+    #get updated packages from Fedora
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/b/binutils-2.26-18.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/c/clang-3.8.0-1.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/c/clang-devel-3.8.0-1.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/c/clang-libs-3.8.0-1.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/c/cpp-6.1.1-2.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/gcc-6.1.1-2.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/gcc-c++-6.1.1-2.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/glibc-2.23.1-7.fc24.i686.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/glibc-2.23.1-7.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/glibc-all-langpacks-2.23.1-7.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/glibc-common-2.23.1-7.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/glibc-devel-2.23.1-7.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/g/glibc-headers-2.23.1-7.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/i/isl-0.14-5.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/libgcc-6.1.1-2.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/libgomp-6.1.1-2.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/libmpc-1.0.2-5.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/libstdc++-6.1.1-2.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/libstdc++-devel-6.1.1-2.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/llvm-3.8.0-1.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/llvm-devel-3.8.0-1.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/llvm-libs-3.8.0-1.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/m/mpfr-3.1.4-1.fc24.x86_64.rpm
+
+    #install binutils
+    sudo yum install -y binutils-2.26-18.fc24.x86_64.rpm
+
+    #install development tools
+    sudo yum install -y clang-3.8.0-1.fc24.x86_64.rpm \
+    clang-devel-3.8.0-1.fc24.x86_64.rpm \
+    clang-libs-3.8.0-1.fc24.x86_64.rpm \
+    cpp-6.1.1-2.fc24.x86_64.rpm \
+    gcc-6.1.1-2.fc24.x86_64.rpm \
+    gcc-c++-6.1.1-2.fc24.x86_64.rpm \
+    glibc-2.23.1-7.fc24.i686.rpm \
+    glibc-2.23.1-7.fc24.x86_64.rpm \
+    glibc-all-langpacks-2.23.1-7.fc24.x86_64.rpm \
+    glibc-common-2.23.1-7.fc24.x86_64.rpm \
+    glibc-devel-2.23.1-7.fc24.x86_64.rpm \
+    glibc-headers-2.23.1-7.fc24.x86_64.rpm \
+    isl-0.14-5.fc24.x86_64.rpm \
+    libgcc-6.1.1-2.fc24.x86_64.rpm \
+    libgomp-6.1.1-2.fc24.x86_64.rpm \
+    libmpc-1.0.2-5.fc24.x86_64.rpm \
+    libstdc++-6.1.1-2.fc24.x86_64.rpm \
+    libstdc++-devel-6.1.1-2.fc24.x86_64.rpm \
+    llvm-3.8.0-1.fc24.x86_64.rpm \
+    llvm-devel-3.8.0-1.fc24.x86_64.rpm \
+    llvm-libs-3.8.0-1.fc24.x86_64.rpm \
+    mpfr-3.1.4-1.fc24.x86_64.rpm
+
+    #install other required packages
     sudo yum install -y \
     git \
     cmake \
     cmake3 \
     ninja-build \
-    clang \
-    gcc-c++ \
     re2c \
     uuid-devel \
     libuuid-devel \
@@ -64,17 +119,13 @@ case "$1" in
     python-libs \
     ncurses-devel \
     python-devel \
-    pkg-config
+    pkgconfig
 
-    #install updated binutils
-    wget https://dl.fedoraproject.org/pub/fedora/linux/updates/24/x86_64/b/binutils-2.26.1-1.fc24.x86_64.rpm
-    yum -y install binutils-2.26.1-1.fc24.x86_64.rpm
-
-    #substitute cmake for cmake3
+    #substitute cmake3 for cmake
     sudo mv /usr/bin/cmake /usr/bin/cmake2
     sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
 
-    #substitute ld for ld.gold
+    #substitute ld.gold for ld
     sudo rm /etc/alternatives/ld
     sudo ln -s /usr/bin/ld.gold /etc/alternatives/ld
 
