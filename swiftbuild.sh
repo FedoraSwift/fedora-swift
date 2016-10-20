@@ -43,13 +43,11 @@ case "$1" in
 
 
   "setup" )  echo "Setup build enviroment"
-    sudo yum install -y \
+    sudo dnf install -y --best --allowerasing \
     git \
     cmake \
-    cmake3 \
     ninja-build \
     clang \
-    gcc-c++ \
     re2c \
     uuid-devel \
     libuuid-devel \
@@ -59,24 +57,12 @@ case "$1" in
     libbsd-devel \
     libedit-devel \
     libxml2-devel \
-    sqlite-devel \
+    libsqlite3x-devel \
     swig \
     python-libs \
     ncurses-devel \
     python-devel \
-    pkg-config
-
-    #install updated binutils
-    wget https://dl.fedoraproject.org/pub/fedora/linux/updates/24/x86_64/b/binutils-2.26.1-1.fc24.x86_64.rpm
-    yum -y install binutils-2.26.1-1.fc24.x86_64.rpm
-
-    #substitute cmake for cmake3
-    sudo mv /usr/bin/cmake /usr/bin/cmake2
-    sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
-
-    #substitute ld for ld.gold
-    sudo rm /etc/alternatives/ld
-    sudo ln -s /usr/bin/ld.gold /etc/alternatives/ld
+    python-pkgconfig
 
     #fix the missing libc6 references
     #pushd /usr/include
