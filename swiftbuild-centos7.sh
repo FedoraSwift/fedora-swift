@@ -120,7 +120,8 @@ case "$1" in
     ncurses-devel \
     python-devel \
     pkgconfig \
-    autoconf
+    autoconf \
+    automake
 
     #substitute cmake3 for cmake
     sudo mv /usr/bin/cmake /usr/bin/cmake2
