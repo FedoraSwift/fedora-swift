@@ -71,6 +71,9 @@ case "$1" in
     wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/llvm-devel-3.8.0-1.fc24.x86_64.rpm
     wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/llvm-libs-3.8.0-1.fc24.x86_64.rpm
     wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/m/mpfr-3.1.4-1.fc24.x86_64.rpm
+    wget https://dl.fedoraproject.org/pub/fedora/linux/releases/24/Everything/x86_64/os/Packages/l/libtool-2.4.6-11.fc24.x86_64.rpm
+    wget https://copr-be.cloud.fedoraproject.org/results/lebauce/Darling/fedora-22-x86_64/libkqueue-2.0.1-1/libkqueue-2.0.1-1.x86_64.rpm
+    wget https://copr-be.cloud.fedoraproject.org/results/lebauce/Darling/fedora-22-x86_64/libkqueue-2.0.1-1/libkqueue-devel-2.0.1-1.x86_64.rpm
 
     #install binutils
     sudo yum install -y binutils-2.26-18.fc24.x86_64.rpm
@@ -97,7 +100,10 @@ case "$1" in
     llvm-3.8.0-1.fc24.x86_64.rpm \
     llvm-devel-3.8.0-1.fc24.x86_64.rpm \
     llvm-libs-3.8.0-1.fc24.x86_64.rpm \
-    mpfr-3.1.4-1.fc24.x86_64.rpm
+    mpfr-3.1.4-1.fc24.x86_64.rpm \
+    libtool-2.4.6-11.fc24.x86_64.rpm \
+    libkqueue-2.0.1-1.x86_64.rpm
+    libkqueue-devel-2.0.1-1.x86_64.rpm
 
     #install other required packages
     sudo yum install -y \
