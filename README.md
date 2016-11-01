@@ -1,5 +1,5 @@
 # fedora-swift
-Build script for Swift language on Fedora 24 and CentOS x64 Linux distribution. Note: CentOS script is still work in progress.
+Build script for Swift language on Fedora 24 and CentOS 7 x64 Linux distribution. Note: CentOS script is still work in progress.
 
 ## About
 This script has been tested on fedora 23, and successfully builds the swift compiler and ecosystem, it creates an install package which is in the same layout as the supplied ubuntu install tar files, but build against the fedora 23 shared libraries. 
