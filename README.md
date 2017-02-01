@@ -63,3 +63,9 @@ To update and rebuild
 ```
 
 Once we get to a stable branch that builds on F23, I will switch the script to checking out that version instead of the wildly unstable 'master' branch. 
+
+## Docker
+To build on Docker, run the following command in the project directory:
+```
+docker build -t fedora-swift .
+```
